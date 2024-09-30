@@ -162,7 +162,6 @@ const questions = [
         longAnswer: "Phosphatidylethanolamine (PE) plays a crucial role in pH-sensitive liposomes. At physiological pH, PE can be stabilized in a bilayer structure by other lipids. However, at lower pH (such as in endosomes), PE tends to adopt a hexagonal phase, which destabilizes the liposome and promotes fusion with endosomal membranes, facilitating drug release."
     },
     {
-        {
         question: "How does the degree of saturation in phospholipid acyl chains affect membrane fluidity?",
         choices: ["Saturation increases fluidity", "Saturation decreases fluidity", "Saturation has no effect on fluidity", "The effect depends on temperature only"],
         correct: 1,
