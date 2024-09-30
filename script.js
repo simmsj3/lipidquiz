@@ -1,4 +1,4 @@
-const questions = [
+let questions = [
     {
         question: "What are the two main categories of phospholipids based on the alcohol contained in their structure?",
         choices: ["Glycerophospholipids and sphingomyelins", "Phosphatidylcholines and phosphatidylethanolamines", "Saturated and unsaturated phospholipids", "Natural and synthetic phospholipids"],
@@ -188,100 +188,102 @@ const questions = [
 ];
 
 
-let currentQuestion = 0;
-let timer;
-let timeLeft = 30;
-let correctAnswers = 0;
-let currentQuestions = [];
+(function() {
+    let currentQuestion = 0;
+    let timer;
+    let timeLeft = 30;
+    let correctAnswers = 0;
+    let currentQuestions = [];
 
-function startQuiz() {
-    correctAnswers = 0;
-    currentQuestions = shuffleArray([...questions]).slice(0, 8);  // Select only 8 random questions
-    currentQuestion = 0;
-    showQuestion();
-    startTimer();
-}
-
-function shuffleArray(array) {
-    for (let i = array.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [array[i], array[j]] = [array[j], array[i]];
-    }
-    return array;
-}
-
-function showQuestion() {
-    const question = currentQuestions[currentQuestion];
-    document.getElementById('question').textContent = question.question;
-    const choicesDiv = document.getElementById('choices');
-    choicesDiv.innerHTML = '';
-    question.choices.forEach((choice, index) => {
-        const button = document.createElement('button');
-        button.textContent = choice;
-        button.classList.add('choice', 'button');
-        button.onclick = () => selectAnswer(index);
-        choicesDiv.appendChild(button);
-    });
-    document.getElementById('feedback').textContent = '';
-    document.getElementById('long-answer').textContent = '';
-    document.getElementById('next-button').style.display = 'none';
-}
-
-function startTimer() {
-    timeLeft = 30;
-    updateTimerDisplay();
-    timer = setInterval(() => {
-        timeLeft--;
-        updateTimerDisplay();
-        if (timeLeft === 0) {
-            clearInterval(timer);
-            selectAnswer(-1);
-        }
-    }, 1000);
-}
-
-function updateTimerDisplay() {
-    document.getElementById('timer').textContent = `Time remaining: ${timeLeft} seconds`;
-}
-
-function selectAnswer(index) {
-    clearInterval(timer);
-    const question = currentQuestions[currentQuestion];
-    const feedbackDiv = document.getElementById('feedback');
-    const longAnswerDiv = document.getElementById('long-answer');
-    
-    if (index === question.correct) {
-        feedbackDiv.textContent = 'Correct!';
-        feedbackDiv.style.color = 'green';
-        longAnswerDiv.textContent = question.longAnswer;
-        correctAnswers++;
-    } else {
-        feedbackDiv.textContent = 'Incorrect.';
-        feedbackDiv.style.color = 'red';
-    }
-    
-    document.getElementById('next-button').style.display = 'block';
-    document.querySelectorAll('.choice').forEach(button => button.disabled = true);
-}
-
-document.getElementById('next-button').onclick = () => {
-    currentQuestion++;
-    if (currentQuestion < currentQuestions.length) {
+    function startQuiz() {
+        correctAnswers = 0;
+        currentQuestions = shuffleArray([...questions]).slice(0, 8);  // Select only 8 random questions
+        currentQuestion = 0;
         showQuestion();
         startTimer();
-    } else {
-        endQuiz();
     }
-};
 
-function endQuiz() {
-    const percentage = (correctAnswers / currentQuestions.length) * 100;
-    document.querySelector('.quiz-content').innerHTML = `
-        <h2>Quiz Completed!</h2>
-        <p>Thank you for taking the quiz.</p>
-        <p>You answered ${correctAnswers} out of ${currentQuestions.length} questions correctly.</p>
-        <p>Your score: ${percentage.toFixed(2)}%</p>
-    `;
-}
+    function shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+        return array;
+    }
 
-startQuiz();
+    function showQuestion() {
+        const question = currentQuestions[currentQuestion];
+        document.getElementById('question').textContent = question.question;
+        const choicesDiv = document.getElementById('choices');
+        choicesDiv.innerHTML = '';
+        question.choices.forEach((choice, index) => {
+            const button = document.createElement('button');
+            button.textContent = choice;
+            button.classList.add('choice', 'button');
+            button.onclick = () => selectAnswer(index);
+            choicesDiv.appendChild(button);
+        });
+        document.getElementById('feedback').textContent = '';
+        document.getElementById('long-answer').textContent = '';
+        document.getElementById('next-button').style.display = 'none';
+    }
+
+    function startTimer() {
+        timeLeft = 30;
+        updateTimerDisplay();
+        timer = setInterval(() => {
+            timeLeft--;
+            updateTimerDisplay();
+            if (timeLeft === 0) {
+                clearInterval(timer);
+                selectAnswer(-1);
+            }
+        }, 1000);
+    }
+
+    function updateTimerDisplay() {
+        document.getElementById('timer').textContent = `Time remaining: ${timeLeft} seconds`;
+    }
+
+    function selectAnswer(index) {
+        clearInterval(timer);
+        const question = currentQuestions[currentQuestion];
+        const feedbackDiv = document.getElementById('feedback');
+        const longAnswerDiv = document.getElementById('long-answer');
+        
+        if (index === question.correct) {
+            feedbackDiv.textContent = 'Correct!';
+            feedbackDiv.style.color = 'green';
+            longAnswerDiv.textContent = question.longAnswer;
+            correctAnswers++;
+        } else {
+            feedbackDiv.textContent = 'Incorrect.';
+            feedbackDiv.style.color = 'red';
+        }
+        
+        document.getElementById('next-button').style.display = 'block';
+        document.querySelectorAll('.choice').forEach(button => button.disabled = true);
+    }
+
+    document.getElementById('next-button').onclick = () => {
+        currentQuestion++;
+        if (currentQuestion < currentQuestions.length) {
+            showQuestion();
+            startTimer();
+        } else {
+            endQuiz();
+        }
+    };
+
+    function endQuiz() {
+        const percentage = (correctAnswers / currentQuestions.length) * 100;
+        document.querySelector('.quiz-content').innerHTML = `
+            <h2>Quiz Completed!</h2>
+            <p>Thank you for taking the quiz.</p>
+            <p>You answered ${correctAnswers} out of ${currentQuestions.length} questions correctly.</p>
+            <p>Your score: ${percentage.toFixed(2)}%</p>
+        `;
+    }
+
+    startQuiz();
+})();
