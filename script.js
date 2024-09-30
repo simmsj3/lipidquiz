@@ -192,10 +192,12 @@ let currentQuestion = 0;
 let timer;
 let timeLeft = 30;
 let correctAnswers = 0;
+let currentQuestions = [];
 
 function startQuiz() {
     correctAnswers = 0;
-    questions = shuffleArray(questions).slice(0, 8);  // Select only 8 random questions
+    currentQuestions = shuffleArray([...questions]).slice(0, 8);  // Select only 8 random questions
+    currentQuestion = 0;
     showQuestion();
     startTimer();
 }
@@ -209,7 +211,7 @@ function shuffleArray(array) {
 }
 
 function showQuestion() {
-    const question = questions[currentQuestion];
+    const question = currentQuestions[currentQuestion];
     document.getElementById('question').textContent = question.question;
     const choicesDiv = document.getElementById('choices');
     choicesDiv.innerHTML = '';
@@ -244,7 +246,7 @@ function updateTimerDisplay() {
 
 function selectAnswer(index) {
     clearInterval(timer);
-    const question = questions[currentQuestion];
+    const question = currentQuestions[currentQuestion];
     const feedbackDiv = document.getElementById('feedback');
     const longAnswerDiv = document.getElementById('long-answer');
     
@@ -264,7 +266,7 @@ function selectAnswer(index) {
 
 document.getElementById('next-button').onclick = () => {
     currentQuestion++;
-    if (currentQuestion < 8) {
+    if (currentQuestion < currentQuestions.length) {
         showQuestion();
         startTimer();
     } else {
@@ -273,11 +275,11 @@ document.getElementById('next-button').onclick = () => {
 };
 
 function endQuiz() {
-    const percentage = (correctAnswers / 8) * 100;
+    const percentage = (correctAnswers / currentQuestions.length) * 100;
     document.querySelector('.quiz-content').innerHTML = `
         <h2>Quiz Completed!</h2>
         <p>Thank you for taking the quiz.</p>
-        <p>You answered ${correctAnswers} out of 8 questions correctly.</p>
+        <p>You answered ${correctAnswers} out of ${currentQuestions.length} questions correctly.</p>
         <p>Your score: ${percentage.toFixed(2)}%</p>
     `;
 }
