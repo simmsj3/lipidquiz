@@ -187,12 +187,15 @@ const questions = [
     }
 ];
 
+
 let currentQuestion = 0;
 let timer;
 let timeLeft = 30;
+let correctAnswers = 0;
 
 function startQuiz() {
-    shuffleArray(questions);
+    correctAnswers = 0;
+    questions = shuffleArray(questions).slice(0, 8);  // Select only 8 random questions
     showQuestion();
     startTimer();
 }
@@ -202,6 +205,7 @@ function shuffleArray(array) {
         const j = Math.floor(Math.random() * (i + 1));
         [array[i], array[j]] = [array[j], array[i]];
     }
+    return array;
 }
 
 function showQuestion() {
@@ -248,6 +252,7 @@ function selectAnswer(index) {
         feedbackDiv.textContent = 'Correct!';
         feedbackDiv.style.color = 'green';
         longAnswerDiv.textContent = question.longAnswer;
+        correctAnswers++;
     } else {
         feedbackDiv.textContent = 'Incorrect.';
         feedbackDiv.style.color = 'red';
@@ -268,7 +273,13 @@ document.getElementById('next-button').onclick = () => {
 };
 
 function endQuiz() {
-    document.querySelector('.quiz-content').innerHTML = '<h2>Quiz Completed!</h2><p>Thank you for taking the quiz.</p>';
+    const percentage = (correctAnswers / 8) * 100;
+    document.querySelector('.quiz-content').innerHTML = `
+        <h2>Quiz Completed!</h2>
+        <p>Thank you for taking the quiz.</p>
+        <p>You answered ${correctAnswers} out of 8 questions correctly.</p>
+        <p>Your score: ${percentage.toFixed(2)}%</p>
+    `;
 }
 
 startQuiz();
