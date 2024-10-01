@@ -227,7 +227,7 @@ let questions = [
             const button = document.createElement('button');
             button.textContent = choice;
             button.classList.add('choice', 'button');
-            button.onclick = () => selectAnswer(index === correctIndex);
+            button.onclick = () => selectAnswer(index, correctIndex);
             choicesDiv.appendChild(button);
         });
         
@@ -244,7 +244,7 @@ let questions = [
             updateTimerDisplay();
             if (timeLeft === 0) {
                 clearInterval(timer);
-                selectAnswer(false);
+                selectAnswer(-1, -1);
             }
         }, 1000);
     }
@@ -253,24 +253,30 @@ let questions = [
         document.getElementById('timer').textContent = `Time remaining: ${timeLeft} seconds`;
     }
 
-    function selectAnswer(isCorrect) {
+    function selectAnswer(selectedIndex, correctIndex) {
         clearInterval(timer);
         const question = currentQuestions[currentQuestion];
         const feedbackDiv = document.getElementById('feedback');
         const longAnswerDiv = document.getElementById('long-answer');
+        const choiceButtons = document.querySelectorAll('.choice');
         
-        if (isCorrect) {
+        if (selectedIndex === correctIndex) {
             feedbackDiv.textContent = 'Correct!';
             feedbackDiv.style.color = 'green';
             longAnswerDiv.textContent = question.longAnswer;
             correctAnswers++;
+            choiceButtons[selectedIndex].style.backgroundColor = 'lightgreen';
         } else {
             feedbackDiv.textContent = 'Incorrect.';
             feedbackDiv.style.color = 'red';
+            if (selectedIndex !== -1) {
+                choiceButtons[selectedIndex].style.backgroundColor = 'lightcoral';
+            }
+            choiceButtons[correctIndex].style.backgroundColor = 'lightgreen';
         }
         
         document.getElementById('next-button').style.display = 'block';
-        document.querySelectorAll('.choice').forEach(button => button.disabled = true);
+        choiceButtons.forEach(button => button.disabled = true);
     }
 
     document.getElementById('next-button').onclick = () => {
