@@ -187,7 +187,6 @@ let questions = [
     }
 ];
 
-
 (function() {
     let currentQuestion = 0;
     let timer;
@@ -216,13 +215,22 @@ let questions = [
         document.getElementById('question').textContent = question.question;
         const choicesDiv = document.getElementById('choices');
         choicesDiv.innerHTML = '';
-        question.choices.forEach((choice, index) => {
+        
+        // Create a copy of the choices array and shuffle it
+        let shuffledChoices = [...question.choices];
+        shuffleArray(shuffledChoices);
+        
+        // Keep track of where the correct answer is after shuffling
+        let correctIndex = shuffledChoices.indexOf(question.choices[question.correct]);
+        
+        shuffledChoices.forEach((choice, index) => {
             const button = document.createElement('button');
             button.textContent = choice;
             button.classList.add('choice', 'button');
-            button.onclick = () => selectAnswer(index);
+            button.onclick = () => selectAnswer(index === correctIndex);
             choicesDiv.appendChild(button);
         });
+        
         document.getElementById('feedback').textContent = '';
         document.getElementById('long-answer').textContent = '';
         document.getElementById('next-button').style.display = 'none';
@@ -236,7 +244,7 @@ let questions = [
             updateTimerDisplay();
             if (timeLeft === 0) {
                 clearInterval(timer);
-                selectAnswer(-1);
+                selectAnswer(false);
             }
         }, 1000);
     }
@@ -245,13 +253,13 @@ let questions = [
         document.getElementById('timer').textContent = `Time remaining: ${timeLeft} seconds`;
     }
 
-    function selectAnswer(index) {
+    function selectAnswer(isCorrect) {
         clearInterval(timer);
         const question = currentQuestions[currentQuestion];
         const feedbackDiv = document.getElementById('feedback');
         const longAnswerDiv = document.getElementById('long-answer');
         
-        if (index === question.correct) {
+        if (isCorrect) {
             feedbackDiv.textContent = 'Correct!';
             feedbackDiv.style.color = 'green';
             longAnswerDiv.textContent = question.longAnswer;
